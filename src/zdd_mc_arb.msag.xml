@@ -1,0 +1,20 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<abapGit version="v1.0.0" serializer="LCL_OBJECT_MSAG" serializer_version="v1.0.0">
+ <asx:abap xmlns:asx="http://www.sap.com/abapxml" version="1.0">
+  <asx:values>
+   <T100A>
+    <ARBGB>ZDD_MC_ARB</ARBGB>
+    <MASTERLANG>E</MASTERLANG>
+    <STEXT>ABAP Dictionary-Texts</STEXT>
+   </T100A>
+   <T100>
+    <T100>
+     <SPRSL>E</SPRSL>
+     <ARBGB>ZDD_MC_ARB</ARBGB>
+     <MSGNR>001</MSGNR>
+     <TEXT>The value doesn´t exist on the table zcompco_arb</TEXT>
+    </T100>
+   </T100>
+  </asx:values>
+ </asx:abap>
+</abapGit>
