@@ -26,7 +26,7 @@ CLASS zcl_sql_54_arb IMPLEMENTATION.
             INTO TABLE @DATA(lt_results_EX_LEFT).
 
     IF sy-subrc EQ 0.
-      out->write( |LEFT EXCLUDING INNER JOIN:  | ).
+      out->write( |LEFT EXCLUDING INNER JOIN :  | ).
       out->write( lt_results_EX_LEFT ).
     ENDIF.
 
