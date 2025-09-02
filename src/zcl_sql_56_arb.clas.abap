@@ -29,15 +29,8 @@ ENDCLASS.
 
 
 
-CLASS zcl_sql_56_arb IMPLEMENTATION.
+CLASS ZCL_SQL_56_ARB IMPLEMENTATION.
 
-
-  METHOD if_oo_adt_classrun~main.
-
-    zcl_sql_56_arb=>get_full_join( IMPORTING et_results = DATA(lt_results) ).
-    out->write( lt_results ).
-
-  ENDMETHOD.
 
   METHOD get_full_join BY DATABASE PROCEDURE FOR HDB
                        LANGUAGE SQLSCRIPT
@@ -57,4 +50,12 @@ CLASS zcl_sql_56_arb IMPLEMENTATION.
 **WHERE NOT (54) :SE excluye los valores y se convierte en un full other join exc inner join.
 
  ENDMETHOD.
+
+
+  METHOD if_oo_adt_classrun~main.
+
+    zcl_sql_56_arb=>get_full_join( IMPORTING et_results = DATA(lt_results) ).
+    out->write( lt_results ).
+
+  ENDMETHOD.
 ENDCLASS.

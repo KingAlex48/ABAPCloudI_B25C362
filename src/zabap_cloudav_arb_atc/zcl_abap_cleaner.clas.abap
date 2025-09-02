@@ -12,7 +12,7 @@ ENDCLASS.
 
 
 
-CLASS zcl_abap_cleaner IMPLEMENTATION.
+CLASS ZCL_ABAP_CLEANER IMPLEMENTATION.
 
 
   METHOD if_oo_adt_classrun~main.
@@ -36,5 +36,4 @@ CLASS zcl_abap_cleaner IMPLEMENTATION.
 
 
   ENDMETHOD.
-
 ENDCLASS.

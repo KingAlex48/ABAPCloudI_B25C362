@@ -12,7 +12,7 @@ ENDCLASS.
 
 
 
-CLASS zcl_sql_28_arb IMPLEMENTATION.
+CLASS ZCL_SQL_28_ARB IMPLEMENTATION.
 
 
   METHOD if_oo_adt_classrun~main.

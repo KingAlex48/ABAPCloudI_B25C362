@@ -12,7 +12,7 @@ ENDCLASS.
 
 
 
-CLASS zcl_auth_checks_arb IMPLEMENTATION.
+CLASS ZCL_AUTH_CHECKS_ARB IMPLEMENTATION.
 
 
   METHOD if_oo_adt_classrun~main.

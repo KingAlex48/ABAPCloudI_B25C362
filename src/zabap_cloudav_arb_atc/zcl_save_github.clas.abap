@@ -12,7 +12,7 @@ ENDCLASS.
 
 
 
-CLASS zcl_save_github IMPLEMENTATION.
+CLASS ZCL_SAVE_GITHUB IMPLEMENTATION.
 
 
   METHOD if_oo_adt_classrun~main.

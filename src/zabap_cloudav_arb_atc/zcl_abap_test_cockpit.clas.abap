@@ -12,7 +12,7 @@ ENDCLASS.
 
 
 
-CLASS zcl_abap_test_cockpit IMPLEMENTATION.
+CLASS ZCL_ABAP_TEST_COCKPIT IMPLEMENTATION.
 
 
   METHOD if_oo_adt_classrun~main.

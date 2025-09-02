@@ -4,6 +4,8 @@
   <asx:values>
    <DEVC>
     <CTEXT>Bloque XII – ATC y abapGit</CTEXT>
+    <LANGUAGE>E</LANGUAGE>
+    <MASTERLANG>E</MASTERLANG>
    </DEVC>
   </asx:values>
  </asx:abap>
