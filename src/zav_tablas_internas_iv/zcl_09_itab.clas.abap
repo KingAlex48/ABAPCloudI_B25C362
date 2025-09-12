@@ -207,7 +207,7 @@ CLASS zcl_09_itab IMPLEMENTATION.
     WHERE country EQ 'DE'
     INTO TABLE @DATA(lt_flights).
 
-    IF sy-subrc EQ 0.
+*    IF sy-subrc EQ 0.
 
 *      READ TABLE lt_flights INTO DATA(ls_flights) INDEX 1. "Trae el registro con el índice indicado
 *      out->write( data = lt_flights name = ` lt_flights  ` ).
@@ -219,17 +219,21 @@ CLASS zcl_09_itab IMPLEMENTATION.
 *      READ TABLE lt_flights ASSIGNING FIELD-SYMBOL(<lfs_flight>) INDEX 3.
 *      out->write( data = <lfs_flight> name = ` <lfs_flight> ` ).
 
-
-      DATA(ls_data) = lt_flights[ 2 ]. "Nueva sintaxis
-
-      out->write( data = ls_data name = ` ls_data  ` ).
-
-      "Min. 10:40 read table con índice
-
-
-
-    ENDIF.
 *
+*      DATA(ls_data) = lt_flights[ 2 ]. "Nueva sintaxis
+*
+*      out->write( data = ls_data name = ` ls_data  ` ).
+*
+*      DATA(ls_data2) = VALUE #( lt_flights[ 20 ] OPTIONAL ). "Si no encuentra ningun registro imprime solo el encabezado.
+*      out->write( data = ls_data2 name =  ` ls_data2  ` ).
+*
+*      DATA(ls_data3) = VALUE #( lt_flights[ 20 ] DEFAULT lt_flights[ 1 ] ). "Si no encuentra el registro muestra un por defecto
+*      out->write( data = ls_data3 name =  ` ls_data3  ` ).
+*
+*
+*
+*    ENDIF.
+**
 **********************************************************************READ TABLE WITH KEY
 
     "READ TABLE WITH KEY
@@ -268,9 +272,79 @@ CLASS zcl_09_itab IMPLEMENTATION.
 *    DATA(ls_flight4) = gt_flights_sort[ KEY primary_key airport_id = 'LAS' ].
 *    out->write( data = ls_flight4 name = ` ls_flight4 ` ).
 
-**********************************************************************
+**********************************************************************CHEQUEO DE REGISTROS
 
 
+    "LINE EXISTS
+
+
+    DATA: gt_flights TYPE STANDARD TABLE OF /dmo/flight.
+
+    SELECT FROM /dmo/flight
+    FIELDS *
+    WHERE carrier_id EQ 'LH'
+    INTO TABLE @gt_flights.
+
+*    IF sy-subrc EQ 0.
+
+*        READ TABLE gt_flights WITH KEY connection_id = '0403' TRANSPORTING NO FIELDS. "se obtiene la respuesta de que si existe o no el registro
+*
+*        IF sy-subrc EQ 0.
+*          out->write( 'The flight exists in the database' ).
+*        ELSE.
+*          out->write( 'The flight doesn´t exists in the database' ).
+*        ENDIF.
+
+
+
+*      IF line_exists( gt_flights[ connection_id = '0403' ] ). "NUEVA SINTAXIS
+*        out->write( 'The flight exists in the database' ).
+*      ELSE.
+*        out->write( 'The flight doesn´t exists in the database' ).
+*      ENDIF.
+*
+*    ENDIF.
+
+
+**********************************************************************LINE INDEX
+
+*    IF sy-subrc EQ 0.
+*
+*      READ TABLE gt_flights WITH KEY connection_id = '0401' TRANSPORTING NO FIELDS.
+*      DATA(lv_index) = sy-tabix. "sy-tabix: guarda el índice de la fila encontrada en READ TABLE
+*      out->write( data = gt_flights name = 'gt_flights' ).
+*      out->write( data = lv_index name = 'INDEX: ' ).
+*
+*      "lines
+*
+*      DATA(lv_num) = lines( gt_flights ). "número de registro de una itab.
+*      out->write( data = lv_num name = 'lv_num: ' ).
+*
+*
+*
+*    ENDIF.
+
+
+**********************************************************************LOOP AT
+
+
+*    DATA gs_flight TYPE /dmo/flight.
+*
+*    LOOP AT gt_flights INTO gs_flight.
+*      out->write( data = gs_flight name = ' gs_flight' ).
+*    ENDLOOP.
+*
+*
+*    LOOP AT gt_flights INTO DATA(gs_flight2) WHERE connection_id = '0401'.
+*      out->write( data = gs_flight2 name = ' gs_flight2' ).
+*    ENDLOOP.
+*
+*    LOOP AT gt_flights ASSIGNING FIELD-SYMBOL(<lfs_flight>) FROM 3 TO 8.
+*      <lfs_flight>-currency_code = 'COP'. "cambia la moneda de los registro del 3 al 8
+**      out->write( data = <lfs_flight> name = '<lfs_flight>' ).
+*    ENDLOOP.
+*
+*    out->write( data = gt_flights name = ' gt_flights' ).
 
 
 
