@@ -98,12 +98,12 @@ CLASS zcl_10_itab IMPLEMENTATION.
 
 **********************************************************************SELECT
 
-    DATA: gt_flights TYPE STANDARD TABLE OF /dmo/flight.
-
-    SELECT FROM /dmo/flight
-    FIELDS *
-    WHERE carrier_id EQ 'LH'
-    INTO TABLE @gt_flights.
+*    DATA: gt_flights TYPE STANDARD TABLE OF /dmo/flight.
+*
+*    SELECT FROM /dmo/flight
+*    FIELDS *
+*    WHERE carrier_id EQ 'LH'
+*    INTO TABLE @gt_flights.
 
 *    SELECT carrier_id,connection_id, flight_date
 *    FROM @gt_flights AS gt
@@ -161,23 +161,194 @@ CLASS zcl_10_itab IMPLEMENTATION.
 **********************************************************************DELETE
 
 
-    DATA: gt_flights_struc TYPE STANDARD TABLE OF /dmo/airport,
-          gs_flights_struc TYPE /dmo/airport.
+*    DATA: gt_flights_struc TYPE STANDARD TABLE OF /dmo/airport,
+*          gs_flights_struc TYPE /dmo/airport.
+*
+*    SELECT FROM /dmo/airport
+*    FIELDS *
+*    WHERE country EQ 'US'
+*    INTO TABLE @gt_flights_struc.
+*
+*    IF sy-subrc EQ 0.
+*      out->write( data = gt_flights_struc name = 'BEFORE gt_flights_struc ' ).
+*
+*      LOOP AT gt_flights_struc INTO gs_flights_struc.
+*
+*        IF gs_flights_struc-airport_id = 'JFK' OR
+*           gs_flights_struc-airport_id = 'BNA' OR
+*           gs_flights_struc-airport_id = 'BOS' .
+*
+*          DELETE TABLE gt_flights_struc FROM gs_flights_struc.
+*        ENDIF.
+*
+*      ENDLOOP.
+*
+*      DELETE gt_flights_struc INDEX 2.
+*      DELETE gt_flights_struc FROM 5 TO 7 . "BORRA UN RANGO DE ÍNDICES
+*      DELETE gt_flights_struc WHERE city IS INITIAL. "BORRA LOS CAMPOS DE CIUDAD VACÍOS.
+*      DELETE ADJACENT DUPLICATES FROM gt_flights_struc COMPARING country."BORRA LOS VALORES REPETIDOS DEL CAMPO DADO.
+*
+*    ENDIF.
+*    out->write( |\n| ).
+*    out->write( data = gt_flights_struc name = 'AFTER gt_flights_struc ' ).
+*
 
-    SELECT FROM /dmo/airport
+**********************************************************************CLEAR/FREE
+
+*    DATA gt_flights_struc TYPE STANDARD TABLE OF /dmo/airport.
+*
+*
+*    SELECT FROM /dmo/airport
+*    FIELDS *
+*    WHERE country EQ 'US'
+*    INTO TABLE @gt_flights_struc.
+*
+*    out->write( data = gt_flights_struc name = 'BEFORE gt_flights_struc ' ).
+*
+*
+*    IF sy-subrc EQ 0.
+
+*      CLEAR gt_flights_struc. "LIMPIA LOS REGISTROS DE LA TABLA GUARDANDO EL ESPACIO EN MEMORIA
+*
+*      FREE gt_flights_struc. ""LIMPIA LOS REGISTROS DE LA TABLA ELIMINANDO ADEMÁS EL ESPACIO EN MEMORIA
+
+*      gt_flights_struc = VALUE #(  ).
+
+*    ENDIF.
+*
+*    out->write( |\n| ).
+*    out->write( data = gt_flights_struc name = 'AFTER gt_flights_struc ' ).
+
+
+**********************************************************************COLLECT
+
+*    DATA: BEGIN OF ls_seats,
+*            carrid TYPE /dmo/flight-carrier_id,
+*            connid TYPE /dmo/flight-connection_id,
+*            seats  TYPE /dmo/flight-seats_max,
+*            price  TYPE /dmo/flight-price,
+*          END OF ls_seats.
+*
+*    DATA gt_seats LIKE HASHED TABLE OF ls_seats WITH UNIQUE KEY carrid connid.
+*
+*    SELECT carrier_id, connection_id, seats_max, price
+*           FROM /dmo/flight
+*           INTO @ls_seats.
+*
+*      COLLECT ls_seats INTO gt_seats. "Inserta los registros a una itab excluyendo los repetidos. Para Tablas hashed y sorted
+*
+*    ENDSELECT.
+*
+*    out->write( data = gt_seats  name = 'gt_seats  ' ).
+
+
+**********************************************************************LET
+
+*    SELECT FROM  /dmo/flight
+*    FIELDS *
+*    WHERE currency_code EQ 'USD'
+*    INTO TABLE @DATA(lt_flights).
+*
+*    SELECT FROM /dmo/booking_m
+*    FIELDS *
+*    INTO TABLE @DATA(lt_airline)
+*    UP TO 50 ROWS.
+*
+*    " Recorremos la tabla de vuelos en USD
+*    LOOP AT lt_flights INTO DATA(ls_fligh_let).
+*
+*      " Construimos un string con datos de aerolínea y vuelo
+*      " usando LET para definir variables temporales dentro de la expresión
+*
+*      DATA(lv_flights) = CONV string( LET lv_airline     = lt_airline[ carrier_id = ls_fligh_let-carrier_id ]-travel_id   " Obtenemos travel_id de la tabla lt_airline
+*                                          lv_fligh_price = lt_flights[ carrier_id = ls_fligh_let-carrier_id  " Obtenemos el precio desde lt_flights buscando por carrier_id + connection_id
+*                                                                       connection_id = ls_fligh_let-connection_id ]-price
+*                                           lv_carrid = lt_airline[ carrier_id = ls_fligh_let-carrier_id ]-carrier_id   " Obtenemos el carrier_id de la tabla lt_airline
+*
+*                                           IN | { lv_carrid } / Airline name: { lv_airline } / flight price: { lv_fligh_price } | ).   " Plantilla de string que inserta los valores de arriba
+*
+*      out->write( data = lv_flights  ).  " Mostramos el string construido en la salida
+*
+*    ENDLOOP.
+
+**********************************************************************BASE
+
+*    SELECT FROM  /dmo/flight
+*       FIELDS *
+*       WHERE currency_code EQ 'USD'
+*       INTO TABLE @DATA(lt_flights).
+*
+*    out->write( data = lt_flights  name = 'INITIAL lt_flights  ' ).
+*
+*    DATA lt_seats TYPE TABLE OF /dmo/flight.
+*
+*
+*    lt_seats =  VALUE #( BASE  lt_flights "crea una copia de la ITAB lt_flights y la asigna a lt_seats.
+*                        ( carrier_id = 'CO'
+*                          connection_id = '000123'
+*                          flight_date = cl_abap_context_info=>get_system_date(  )
+*                          price = '2000'
+*                          currency_code = 'COP'
+*                          plane_type_id = 'B213-58'
+*                          seats_max = 120
+*                          seats_occupied = 100  )  ).
+
+
+*     lt_seats =  VALUE #( BASE  lt_seats ( LINES OF lt_flights ) "AGREGA LO QUE YA SE TIENE EN lt_seats + lt_flights
+*
+*                        ( carrier_id = 'PE'
+*                          connection_id = '000123'
+*                          flight_date = cl_abap_context_info=>get_system_date(  )
+*                          price = '500'
+*                          currency_code = 'USD'
+*                          plane_type_id = 'B213-58'
+*                          seats_max = 50
+*                          seats_occupied = 10  )  ).
+
+*
+*    lt_seats = CORRESPONDING #( BASE ( lt_seats ) lt_flights ). "AGREGA LO QUE YA SE TIENE EN lt_seats + lt_flights
+*
+*    out->write( data = lt_seats name = ' lt_seats ' ).
+
+
+**********************************************************************GROUP BY
+
+
+
+    SELECT FROM /dmo/flight
     FIELDS *
-    WHERE country EQ 'US'
-    INTO TABLE @gt_flights_struc.
+    INTO TABLE @DATA(gt_dmo_flight).
 
-    IF sy-subrc EQ 0.
-      out->write( data = gt_flights_struc name = 'BEFORE gt_flights_struc ' ).
+    DATA gt_members LIKE gt_dmo_flight.
 
-      LOOP AT gt_flights_struc INTO gs_flights_struc.
+    "Grouping by column
+
+    LOOP AT gt_dmo_flight ASSIGNING FIELD-SYMBOL(<lfs_dmo_fligh>)
+
+*      GROUP BY <lfs_dmo_fligh>-carrier_id.
+
+     GROUP BY ( airline = <lfs_dmo_fligh>-carrier_id  "AGRUPA POR AEROLÍNEA
+                plane = <lfs_dmo_fligh>-plane_type_id ).  "Y POR PLANE TYPE ID
+
+      CLEAR gt_members.
+
+      LOOP AT GROUP <lfs_dmo_fligh> INTO DATA(gs_member).
+
+        gt_members = VALUE #(  BASE gt_members ( gs_member ) ).
 
       ENDLOOP.
 
+      out->write( data = gt_members name = ' gt_members ' ).
 
-    ENDIF.
+    ENDLOOP.
+
+
+
+
+
+
+
+
 
 
 
